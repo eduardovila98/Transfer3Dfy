@@ -2,6 +2,7 @@ import numpy as np
 
 def three2two(r1,r2):
     
+    #It forces the r1 to be in the positive x-axis
     
     #Rotate about z-axis until r1 vector projection coincides with positive x-axis
     r1v1 = np.transpose([r1])
@@ -31,9 +32,10 @@ def three2two(r1,r2):
     R3 = np.array(((1.0, 0.0, 0.0), (0.0, c3, -s3), (0.0, s3, c3)))
     r1vf = np.dot(R3,r1v3)
     r2vf = np.dot(R3,r2v3)
-    #clean them
-    r1vf[1], r1vf[2] = 0.0, 0.0
-    r2vf[2] = 0.0
+    
+    #Reduced them to 2D tuples
+    r1vf = (float(r1vf[0]), 0.0)
+    r2vf = (float(r2vf[0]), float(r2vf[1]))
     
     #join the 3 angles in a tuple
     angles = (theta1, theta2, theta3)
@@ -42,4 +44,5 @@ def three2two(r1,r2):
 
 
 def two2three(r1, r2, angles):
+    return null
     
