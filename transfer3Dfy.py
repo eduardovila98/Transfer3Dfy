@@ -5,7 +5,7 @@ def three2two(r1,r2):
     #It forces the r1 to be in the positive x-axis
     
     #Rotate about z-axis until r1 vector projection coincides with positive x-axis
-    r1v1 = np.transpose([r1])
+    r1v1 = np.trranspose([r1])
     r2v1 = np.transpose([r2])
     theta1 = np.angle(complex(r1v1[0],r1v1[1]), deg=False)
     if theta1 < 0:
@@ -43,11 +43,13 @@ def three2two(r1,r2):
     return r1vf, r2vf, angles
 
 
-def two2three(r1, r2, angles):
+def two2three(angles, r1, r2, v1, v2, x, y, vx, vy):
     
     #add 0.0 to the z coordinate
     r1vf = np.transpose([r1+(0.0,)])
     r2vf = np.transpose([r2+(0.0,)])
+    v1vf = np.transpose([v1+(0.0,)])
+    v2vf = np.transpose([v2+(0.0,)])
 
     theta1, theta2, theta3 = angles #extract angles
     #calculate cos and sin
@@ -59,12 +61,38 @@ def two2three(r1, r2, angles):
     R3 = np.array(((1.0, 0.0, 0.0), (0.0, c3, -s3), (0.0, s3, c3)))
     R2 = np.array(((c2, 0.0, s2), (0.0, 1.0, 0.0), (-s2, 0.0, c2)))
     R1 = np.array(((c1, -s1, 0.0), (s1, c1, 0.0), (0.0, 0.0, 1.0)))
-    #Dot them into 1
+    #Dot them into one
     R = np.dot(R1,np.dot(R2,R3))
     
-    #Rotate all at once
+    #Rotate r and v
     r1v1 = np.dot(R,r1vf)
     r2v1 = np.dot(R,r2vf)
-
-    return r1v1, r2v1
+    v1v1 = np.dot(R,v1vf)
+    v2v1 = np.dot(R,v2vf)
     
+    #apply rotation to all points and velocities of trajectory
+    N = len(x)
+    xr = np.array([0.0] * N)
+    yr = np.array([0.0] * N)
+    zr = np.array([0.0] * N)
+    vxr = np.array([0.0] * N)
+    vyr = np.array([0.0] * N)
+    vzr = np.array([0.0] * N)
+    
+    for i in range(N):
+        r = np.transpose(np.array([[x[i], y[i], 0.0]]))
+        r = np.dot(R,r)
+        #save it
+        xr[i] = r[0]
+        yr[i] = r[1]
+        zr[i] = r[2]
+        
+        #now for the velocities
+        v = np.transpose(np.arrat([[vx[i], vy[i], 0.0]]))
+        v = np.dot(R,v)
+        #save it
+        vxr[i] = v[0]
+        vyr[i] = v[1]
+        vzr[i] = v[2]
+
+    return r1v1, r2v1, v1v1, v2v1, xr, yr, zr, vxr, vyr, vzr
