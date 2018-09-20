@@ -45,25 +45,26 @@ def three2two(r1,r2):
 
 def two2three(r1, r2, angles):
     
-    r1 = np.transpose([r1+(0.0,)])
-    r2 = np.transpose([r2+(0.0,)])
-    theta3 = angles[2]
+    #add 0.0 to the z coordinate
+    r1vf = np.transpose([r1+(0.0,)])
+    r2vf = np.transpose([r2+(0.0,)])
+
+    theta1, theta2, theta3 = angles #extract angles
+    #calculate cos and sin
     c3, s3 = np.cos(theta3), np.sin(theta3)
-    R3 = np.array(((1.0, 0.0, 0.0), (0.0, c3, -s3), (0.0, s3, c3)))
-    r1v3 = np.dot(R3,r1)
-    r2v3 = np.dot(R3,r2)
-
-    theta2 = angles[1]
     c2, s2 = np.cos(-theta2), np.sin(-theta2)
-    R2 = np.array(((c2, 0.0, s2), (0.0, 1.0, 0.0), (-s2, 0.0, c2)))
-    r1v2 = np.dot(R2,r1v3)
-    r2v2 = np.dot(R2,r2v3)
-
-    theta1 = angles[0]
     c1, s1 = np.cos(theta1), np.sin(theta1)
-    R1 = np.array(((c1, -s1, 0.0), (s1, c1, 0.0), (0.0, 0.0, 1.0)))
-    r1v1 = np.dot(R1,r1v2)
-    r2v1 = np.dot(R1,r2v2)
     
+    #Create rotation matrices
+    R3 = np.array(((1.0, 0.0, 0.0), (0.0, c3, -s3), (0.0, s3, c3)))
+    R2 = np.array(((c2, 0.0, s2), (0.0, 1.0, 0.0), (-s2, 0.0, c2)))
+    R1 = np.array(((c1, -s1, 0.0), (s1, c1, 0.0), (0.0, 0.0, 1.0)))
+    #Dot them into 1
+    R = np.dot(R1,np.dot(R2,R3))
+    
+    #Rotate all at once
+    r1v1 = np.dot(R,r1vf)
+    r2v1 = np.dot(R,r2vf)
+
     return r1v1, r2v1
     
